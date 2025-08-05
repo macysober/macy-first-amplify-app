@@ -1,18 +1,18 @@
 version: 1
-backend:
-  phases:
-    build:
-      commands:
-        - npm ci --cache .npm --prefer-offline
-        - npx amplify push --yes
 frontend:
   phases:
     preBuild:
       commands:
+        - echo "Node.js version"
+        - node --version
+        - echo "NPM version"
+        - npm --version
         - npm ci --cache .npm --prefer-offline
     build:
       commands:
+        - echo "Building Next.js application"
         - npm run build
+        - echo "Build completed successfully"
   artifacts:
     baseDirectory: .next
     files:

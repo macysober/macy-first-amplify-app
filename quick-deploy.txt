@@ -1,0 +1,18 @@
+🚀 QUICK DEPLOYMENT CHECKLIST
+===============================
+
+You're logged into AWS Console. Here's the fastest way:
+
+1. Go to: https://console.aws.amazon.com/amplify/
+2. Click: "Create new app"
+3. Click: "Deploy from GitHub" 
+4. Click: "Connect to GitHub"
+5. Select: "macysober/macy-first-amplify-app"
+6. Branch: "main"
+7. Click: "Next" → "Next" → "Save and deploy"
+
+Your app will be live in ~5 minutes at a URL like:
+https://main.d1234abcd.amplifyapp.com
+
+✅ GitHub Repo: https://github.com/macysober/macy-first-amplify-app
+✅ Everything is ready for deployment!
