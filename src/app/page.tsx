@@ -4,24 +4,37 @@ export default function Home() {
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
+        <div className="flex items-center gap-4">
+          <Image
+            className="dark:invert"
+            src="/next.svg"
+            alt="Next.js logo"
+            width={180}
+            height={38}
+            priority
+          />
+          <span className="text-2xl font-bold text-orange-500">+</span>
+          <div className="text-2xl font-bold text-orange-500">AWS Amplify</div>
+        </div>
+        
+        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 rounded-lg text-center">
+          <h1 className="text-3xl font-bold mb-2">🎉 Macy's First Amplify App!</h1>
+          <p className="text-lg">Welcome to Chinchilla Academy - Day 3, Week 1</p>
+          <p className="text-sm mt-2 opacity-90">Next.js + AWS Amplify + Tailwind CSS</p>
+        </div>
+
         <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
           <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
+            ✅ Created Next.js app with TypeScript and Tailwind
+          </li>
+          <li className="mb-2 tracking-[-.01em]">
+            ✅ Added AWS Amplify dependencies
+          </li>
+          <li className="mb-2 tracking-[-.01em]">
+            ✅ Initialized Git repository
           </li>
           <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
+            🚀 Ready to deploy to AWS Amplify!
           </li>
         </ol>
 
