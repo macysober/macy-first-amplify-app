@@ -18,7 +18,7 @@ export default function Home() {
         </div>
         
         <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 rounded-lg text-center">
-          <h1 className="text-3xl font-bold mb-2">🎉 My First Amplify App!</h1>
+          <h1 className="text-3xl font-bold mb-2">🎉 Macy's First Amplify App!</h1>
           <p className="text-lg">Welcome to Chinchilla Academy - Day 3, Week 1</p>
           <p className="text-sm mt-2 opacity-90">Next.js + AWS Amplify + Tailwind CSS</p>
         </div>
