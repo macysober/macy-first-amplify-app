@@ -1,116 +1,348 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import { hairProducts, defaultHairProducts, skinProducts, concernProducts } from './lib/productData';
 
 export default function Home() {
+  const [currentStep, setCurrentStep] = useState('welcome');
+  const [hairType, setHairType] = useState('');
+  const [skinType, setSkinType] = useState('');
+  const [skinConcerns, setSkinConcerns] = useState<string[]>([]);
+
+  const hairTypes = [
+    { id: '1a', label: '1A - Straight (Fine)', emoji: '💇‍♀️' },
+    { id: '1b', label: '1B - Straight (Medium)', emoji: '💇‍♀️' },
+    { id: '1c', label: '1C - Straight (Coarse)', emoji: '💇‍♀️' },
+    { id: '2a', label: '2A - Wavy (Fine)', emoji: '〰️' },
+    { id: '2b', label: '2B - Wavy (Medium)', emoji: '〰️' },
+    { id: '2c', label: '2C - Wavy (Coarse)', emoji: '〰️' },
+    { id: '3a', label: '3A - Curly (Loose)', emoji: '🌀' },
+    { id: '3b', label: '3B - Curly (Tight)', emoji: '🌀' },
+    { id: '3c', label: '3C - Curly (Tight Corkscrews)', emoji: '🌀' },
+    { id: '4a', label: '4A - Coily (Soft)', emoji: '🔗' },
+    { id: '4b', label: '4B - Coily (Wiry)', emoji: '🔗' },
+    { id: '4c', label: '4C - Coily (Tight)', emoji: '🔗' }
+  ];
+
+  const skinTypes = [
+    { id: 'dry', label: 'Dry', description: 'Feels tight, may have flaky patches', emoji: '🏜️' },
+    { id: 'oily', label: 'Oily', description: 'Shiny, prone to breakouts', emoji: '✨' },
+    { id: 'combination', label: 'Combination', description: 'Oily T-zone, dry cheeks', emoji: '🎭' },
+    { id: 'normal', label: 'Normal', description: 'Balanced, few issues', emoji: '😊' },
+    { id: 'sensitive', label: 'Sensitive', description: 'Easily irritated, redness', emoji: '🌹' }
+  ];
+
+  const skinConcernOptions = [
+    { id: 'acne', label: 'Acne', emoji: '🔴' },
+    { id: 'aging', label: 'Anti-Aging', emoji: '⏰' },
+    { id: 'dark-spots', label: 'Dark Spots', emoji: '🟤' },
+    { id: 'redness', label: 'Redness', emoji: '🌡️' },
+    { id: 'dryness', label: 'Dryness', emoji: '💧' },
+    { id: 'oiliness', label: 'Excess Oil', emoji: '🛢️' },
+    { id: 'pores', label: 'Large Pores', emoji: '🕳️' },
+    { id: 'sensitivity', label: 'Sensitivity', emoji: '⚡' }
+  ];
+
+  // Recommendation functions
+  const getHairRecommendations = (hairType: string) => {
+    return hairProducts[hairType] || hairProducts[hairType.substring(0, 2)] || defaultHairProducts;
+  };
+
+  const getSkinRecommendations = (skinType: string, concerns: string[]) => {
+    let products = [...(skinProducts[skinType] || skinProducts.normal)];
+    
+    // Add specific products for concerns
+    concerns.forEach(concern => {
+      if (concernProducts[concern]) {
+        products.push(concernProducts[concern]);
+      }
+    });
+    
+    return products.slice(0, 6); // Return max 6 products
+  };
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <div className="flex items-center gap-4">
-          <Image
-            className="dark:invert"
-            src="/next.svg"
-            alt="Next.js logo"
-            width={180}
-            height={38}
-            priority
-          />
-          <span className="text-2xl font-bold text-orange-500">+</span>
-          <div className="text-2xl font-bold text-orange-500">AWS Amplify</div>
-        </div>
-        
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 rounded-lg text-center">
-          <h1 className="text-3xl font-bold mb-2">🎉 Macy's First Amplify App!</h1>
-          <p className="text-lg">Welcome to Chinchilla Academy - Day 3, Week 1</p>
-          <p className="text-sm mt-2 opacity-90">Next.js + AWS Amplify + Tailwind CSS</p>
+    <div className="font-sans min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 p-4">
+      <main className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8 pt-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
+            ✨ Beauty Match AI ✨
+          </h1>
+          <p className="text-gray-600 mt-2">Find your perfect hair & skin care products</p>
         </div>
 
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            ✅ Created Next.js app with TypeScript and Tailwind
-          </li>
-          <li className="mb-2 tracking-[-.01em]">
-            ✅ Added AWS Amplify dependencies
-          </li>
-          <li className="mb-2 tracking-[-.01em]">
-            ✅ Initialized Git repository
-          </li>
-          <li className="tracking-[-.01em]">
-            🚀 Ready to deploy to AWS Amplify!
-          </li>
-        </ol>
+        {/* Welcome Step */}
+        {currentStep === 'welcome' && (
+          <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+            <div className="text-6xl mb-4">💄</div>
+            <h2 className="text-2xl font-bold mb-4">Welcome to Beauty Match AI!</h2>
+            <p className="text-gray-600 mb-6">
+              Let's find the perfect products for your unique hair and skin type. 
+              This personalized quiz takes just 2 minutes!
+            </p>
+            <button
+              onClick={() => setCurrentStep('hair')}
+              className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all"
+            >
+              Start Your Beauty Journey →
+            </button>
+          </div>
+        )}
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+        {/* Hair Type Step */}
+        {currentStep === 'hair' && (
+          <div className="bg-white rounded-2xl shadow-xl p-8">
+            <h2 className="text-2xl font-bold mb-2">What's your hair type?</h2>
+            <p className="text-gray-600 mb-6">Select the option that best describes your natural hair texture</p>
+            
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+              {hairTypes.map((type) => (
+                <button
+                  key={type.id}
+                  onClick={() => setHairType(type.id)}
+                  className={`p-4 rounded-lg border-2 transition-all hover:shadow-md ${
+                    hairType === type.id
+                      ? 'border-purple-500 bg-purple-50'
+                      : 'border-gray-200 hover:border-purple-300'
+                  }`}
+                >
+                  <div className="text-2xl mb-1">{type.emoji}</div>
+                  <div className="text-sm font-medium">{type.label}</div>
+                </button>
+              ))}
+            </div>
+            
+            <div className="flex justify-between">
+              <button
+                onClick={() => setCurrentStep('welcome')}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ← Back
+              </button>
+              <button
+                onClick={() => setCurrentStep('skin')}
+                disabled={!hairType}
+                className={`px-6 py-2 rounded-full font-semibold transition-all ${
+                  hairType
+                    ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:shadow-lg'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                }`}
+              >
+                Next →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Skin Type Step */}
+        {currentStep === 'skin' && (
+          <div className="bg-white rounded-2xl shadow-xl p-8">
+            <h2 className="text-2xl font-bold mb-2">What's your skin type?</h2>
+            <p className="text-gray-600 mb-6">Choose your primary skin type</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+              {skinTypes.map((type) => (
+                <button
+                  key={type.id}
+                  onClick={() => setSkinType(type.id)}
+                  className={`p-4 rounded-lg border-2 transition-all hover:shadow-md text-left ${
+                    skinType === type.id
+                      ? 'border-purple-500 bg-purple-50'
+                      : 'border-gray-200 hover:border-purple-300'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="text-2xl">{type.emoji}</div>
+                    <div>
+                      <div className="font-medium">{type.label}</div>
+                      <div className="text-sm text-gray-500">{type.description}</div>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+            
+            <div className="flex justify-between">
+              <button
+                onClick={() => setCurrentStep('hair')}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ← Back
+              </button>
+              <button
+                onClick={() => setCurrentStep('concerns')}
+                disabled={!skinType}
+                className={`px-6 py-2 rounded-full font-semibold transition-all ${
+                  skinType
+                    ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:shadow-lg'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                }`}
+              >
+                Next →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Skin Concerns Step */}
+        {currentStep === 'concerns' && (
+          <div className="bg-white rounded-2xl shadow-xl p-8">
+            <h2 className="text-2xl font-bold mb-2">Any specific skin concerns?</h2>
+            <p className="text-gray-600 mb-6">Select all that apply (optional)</p>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+              {skinConcernOptions.map((concern) => (
+                <button
+                  key={concern.id}
+                  onClick={() => {
+                    setSkinConcerns(prev =>
+                      prev.includes(concern.id)
+                        ? prev.filter(c => c !== concern.id)
+                        : [...prev, concern.id]
+                    );
+                  }}
+                  className={`p-3 rounded-lg border-2 transition-all hover:shadow-md ${
+                    skinConcerns.includes(concern.id)
+                      ? 'border-purple-500 bg-purple-50'
+                      : 'border-gray-200 hover:border-purple-300'
+                  }`}
+                >
+                  <div className="text-xl mb-1">{concern.emoji}</div>
+                  <div className="text-sm font-medium">{concern.label}</div>
+                </button>
+              ))}
+            </div>
+            
+            <div className="flex justify-between">
+              <button
+                onClick={() => setCurrentStep('skin')}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ← Back
+              </button>
+              <button
+                onClick={() => setCurrentStep('results')}
+                className="px-6 py-2 rounded-full font-semibold bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:shadow-lg"
+              >
+                Get My Recommendations →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Results Step */}
+        {currentStep === 'results' && (
+          <div className="bg-white rounded-2xl shadow-xl p-8">
+            <h2 className="text-2xl font-bold mb-2 text-center">Your Personalized Recommendations</h2>
+            <p className="text-gray-600 mb-6 text-center">Based on your unique profile</p>
+            
+            {/* User Profile Summary */}
+            <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg p-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="font-semibold">Hair Type:</span> {hairTypes.find(h => h.id === hairType)?.label}
+                </div>
+                <div>
+                  <span className="font-semibold">Skin Type:</span> {skinTypes.find(s => s.id === skinType)?.label}
+                </div>
+                {skinConcerns.length > 0 && (
+                  <div className="md:col-span-2">
+                    <span className="font-semibold">Concerns:</span> {skinConcerns.map(c => 
+                      skinConcernOptions.find(opt => opt.id === c)?.label
+                    ).join(', ')}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Product Recommendations */}
+            <div className="space-y-6">
+              {/* Hair Products */}
+              <div>
+                <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
+                  <span>💇‍♀️</span> Hair Care Recommendations
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {getHairRecommendations(hairType).map((product: any, index: number) => (
+                    <div key={index} className="border rounded-lg p-4 hover:shadow-md transition-all">
+                      <div className="flex justify-between items-start">
+                        <div className="font-semibold text-purple-600">{product.type}</div>
+                        <div className="text-lg font-bold">{product.price}</div>
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">{product.brand}</div>
+                      <div className="text-sm font-medium mt-1">{product.name}</div>
+                      <div className="flex items-center gap-2 mt-2">
+                        <div className="flex items-center">
+                          {[...Array(5)].map((_, i) => (
+                            <span key={i} className={i < Math.floor(product.rating) ? "text-yellow-400" : "text-gray-300"}>★</span>
+                          ))}
+                        </div>
+                        <span className="text-xs text-gray-500">({product.reviews.toLocaleString()})</span>
+                      </div>
+                      <div className="text-xs text-gray-600 mt-2">{product.benefit}</div>
+                      <div className="text-xs text-gray-500 italic mt-2 border-l-2 border-purple-200 pl-2">
+                        {product.review}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Skin Products */}
+              <div>
+                <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
+                  <span>✨</span> Skin Care Recommendations
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {getSkinRecommendations(skinType, skinConcerns).map((product: any, index: number) => (
+                    <div key={index} className="border rounded-lg p-4 hover:shadow-md transition-all">
+                      <div className="flex justify-between items-start">
+                        <div className="font-semibold text-pink-600">{product.type}</div>
+                        <div className="text-lg font-bold">{product.price}</div>
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">{product.brand}</div>
+                      <div className="text-sm font-medium mt-1">{product.name}</div>
+                      <div className="flex items-center gap-2 mt-2">
+                        <div className="flex items-center">
+                          {[...Array(5)].map((_, i) => (
+                            <span key={i} className={i < Math.floor(product.rating) ? "text-yellow-400" : "text-gray-300"}>★</span>
+                          ))}
+                        </div>
+                        <span className="text-xs text-gray-500">({product.reviews.toLocaleString()})</span>
+                      </div>
+                      <div className="text-xs text-gray-600 mt-2">{product.benefit}</div>
+                      <div className="text-xs text-gray-500 italic mt-2 border-l-2 border-pink-200 pl-2">
+                        {product.review}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-center gap-4 mt-8">
+              <button
+                onClick={() => {
+                  setCurrentStep('welcome');
+                  setHairType('');
+                  setSkinType('');
+                  setSkinConcerns([]);
+                }}
+                className="px-6 py-2 rounded-full border-2 border-purple-500 text-purple-600 font-semibold hover:bg-purple-50"
+              >
+                Start Over
+              </button>
+              <button
+                onClick={() => window.print()}
+                className="px-6 py-2 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold hover:shadow-lg"
+              >
+                Save Results
+              </button>
+            </div>
+          </div>
+        )}
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
