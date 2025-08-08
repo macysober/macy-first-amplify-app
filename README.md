@@ -1,6 +1,6 @@
 # THE DWELLING - Psychological Horror Escape Game
 
-## 🎮 Project Status
+## 🎮 Project Status - Live Demo
 This repository contains:
 1. **The Dwelling** - Horror escape room game design & Unity implementation
 2. **Beauty Match AI** - Previous app (backed up in `src/app/page_backup_beauty.tsx`)
