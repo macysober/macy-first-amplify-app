@@ -1,279 +1,404 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Header from '@/components/Header';
-import HaircareQuiz from '@/components/HaircareQuiz';
-import SkincareQuiz from '@/components/SkincareQuiz';
-import MakeupQuiz from '@/components/MakeupQuiz';
-import Chatbot from '@/components/Chatbot';
-import { useLanguage } from '@/contexts/LanguageContext';
+import Image from 'next/image';
 
 export default function Home() {
-  const { t } = useLanguage();
-  const [activeTab, setActiveTab] = useState('home');
-  const [showBackToTop, setShowBackToTop] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
+  const [fearLevel, setFearLevel] = useState(0);
+  const [sanity, setSanity] = useState(100);
+  const [showEntity, setShowEntity] = useState(false);
+  const [glitchEffect, setGlitchEffect] = useState(false);
 
+  // Simulate fear detection
   useEffect(() => {
-    const handleScroll = () => {
-      setShowBackToTop(window.scrollY > 300);
-    };
+    const interval = setInterval(() => {
+      if (activeSection === 'demo') {
+        setFearLevel(prev => Math.min(prev + Math.random() * 5, 100));
+        setSanity(prev => Math.max(prev - Math.random() * 2, 0));
+        
+        // Random entity appearances
+        if (Math.random() < 0.02 && !showEntity) {
+          setShowEntity(true);
+          setTimeout(() => setShowEntity(false), 200);
+        }
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+        // Glitch effect at high fear
+        if (fearLevel > 70 && Math.random() < 0.1) {
+          setGlitchEffect(true);
+          setTimeout(() => setGlitchEffect(false), 100);
+        }
+      }
+    }, 500);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+    return () => clearInterval(interval);
+  }, [activeSection, fearLevel, showEntity]);
 
-  const tabs = [
-    { id: 'home', label: t('nav.home'), emoji: '🏠' },
-    { id: 'haircare', label: t('nav.haircare'), emoji: '💇‍♀️' },
-    { id: 'skincare', label: t('nav.skincare'), emoji: '✨' },
-    { id: 'makeup', label: t('nav.makeup'), emoji: '💄' }
+  const sections = [
+    { id: 'home', label: 'Home', icon: '🏚️' },
+    { id: 'features', label: 'Features', icon: '👁️' },
+    { id: 'rooms', label: 'Escape Rooms', icon: '🔓' },
+    { id: 'demo', label: 'Live Demo', icon: '🎮' },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50">
-      <Header />
+    <div className={`min-h-screen bg-black text-white transition-all duration-300 ${glitchEffect ? 'glitch' : ''}`}>
+      {/* Atmospheric overlay */}
+      <div className="fixed inset-0 bg-gradient-to-b from-transparent via-red-900/10 to-black/50 pointer-events-none" />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Tab Navigation */}
-        <div className="flex justify-center mb-8">
-          <div className="bg-white rounded-full shadow-md p-1 flex space-x-1">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-3 rounded-full font-medium transition-all flex items-center gap-2 ${
-                  activeTab === tab.id
-                    ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg'
-                    : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'
-                }`}
-              >
-                <span className="text-lg">{tab.emoji}</span>
-                <span>{tab.label}</span>
-              </button>
-            ))}
+      {/* Entity flash */}
+      {showEntity && (
+        <div className="fixed inset-0 z-50 pointer-events-none">
+          <div className="absolute inset-0 bg-red-900/20 animate-pulse" />
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-9xl opacity-10">
+            👤
           </div>
         </div>
+      )}
 
-        {/* Content */}
-        {activeTab === 'home' && (
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-xl p-8 text-center relative overflow-hidden">
-              {/* Background Beauty Products Pattern */}
-              <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
-                <div className="absolute top-10 left-10 text-6xl beauty-bg-1">💄</div>
-                <div className="absolute top-20 right-20 text-7xl beauty-bg-2">💅</div>
-                <div className="absolute bottom-10 left-20 text-5xl beauty-bg-3">🧴</div>
-                <div className="absolute bottom-20 right-10 text-6xl beauty-bg-4">💋</div>
-                <div className="absolute top-1/2 left-1/4 text-7xl beauty-bg-5">🧼</div>
-                <div className="absolute top-1/3 right-1/3 text-5xl beauty-bg-6">✨</div>
-                <div className="absolute bottom-1/3 left-1/3 text-6xl beauty-bg-7">🧽</div>
-                <div className="absolute top-40 left-1/2 text-5xl beauty-bg-8">🪒</div>
-                <div className="absolute bottom-40 right-1/4 text-7xl beauty-bg-9">💆‍♀️</div>
-                <div className="absolute top-60 left-60 text-8xl beauty-bg-1">🧖‍♀️</div>
-                <div className="absolute bottom-60 right-60 text-6xl beauty-bg-3">💆</div>
-                <div className="absolute top-1/4 right-1/2 text-5xl beauty-bg-5">🧴</div>
-                <div className="absolute top-80 right-40 text-7xl beauty-bg-7">💅</div>
-                <div className="absolute bottom-1/4 left-40 text-6xl beauty-bg-9">✨</div>
-                <div className="absolute top-32 left-1/3 text-5xl beauty-bg-2">🧼</div>
-                <div className="absolute bottom-32 right-1/3 text-8xl beauty-bg-4">💄</div>
-              </div>
-              <div className="relative z-10">
-              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
-                {t('home.welcome')}
-              </h1>
-              <p className="text-lg text-gray-600 mb-8">
-                {t('home.subtitle')}
+      {/* Navigation */}
+      <nav className="sticky top-0 z-40 bg-black/90 backdrop-blur-sm border-b border-red-900/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <h1 className="text-2xl font-bold text-red-500 glitch-text">THE DWELLING</h1>
+            <div className="flex space-x-1">
+              {sections.map((section) => (
+                <button
+                  key={section.id}
+                  onClick={() => setActiveSection(section.id)}
+                  className={`px-4 py-2 rounded-lg transition-all ${
+                    activeSection === section.id
+                      ? 'bg-red-900 text-white'
+                      : 'text-gray-400 hover:text-white hover:bg-red-900/30'
+                  }`}
+                >
+                  <span className="mr-2">{section.icon}</span>
+                  <span className="hidden sm:inline">{section.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {activeSection === 'home' && (
+          <div className="space-y-12">
+            <div className="text-center">
+              <h2 className="text-6xl font-bold mb-4 animate-pulse text-red-500">
+                YOUR MIND IS THE ENEMY
+              </h2>
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+                A 4-player psychological horror escape room where an AI entity learns your deepest fears 
+                through microphone analysis, movement tracking, and behavioral patterns.
               </p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-                <div 
-                  onClick={() => setActiveTab('haircare')}
-                  className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl cursor-pointer hover:shadow-lg transition-all hover:scale-105"
-                >
-                  <div className="text-4xl mb-4">💇‍♀️</div>
-                  <h3 className="text-xl font-semibold mb-2">{t('home.haircare.title')}</h3>
-                  <p className="text-gray-600 text-sm">
-                    {t('home.haircare.description')}
-                  </p>
-                </div>
-                
-                <div 
-                  onClick={() => setActiveTab('skincare')}
-                  className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl cursor-pointer hover:shadow-lg transition-all hover:scale-105"
-                >
-                  <div className="text-4xl mb-4">✨</div>
-                  <h3 className="text-xl font-semibold mb-2">{t('home.skincare.title')}</h3>
-                  <p className="text-gray-600 text-sm">
-                    {t('home.skincare.description')}
-                  </p>
-                </div>
-                
-                <div 
-                  onClick={() => setActiveTab('makeup')}
-                  className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl cursor-pointer hover:shadow-lg transition-all hover:scale-105"
-                >
-                  <div className="text-4xl mb-4">💄</div>
-                  <h3 className="text-xl font-semibold mb-2">{t('home.makeup.title')}</h3>
-                  <p className="text-gray-600 text-sm">
-                    {t('home.makeup.description')}
-                  </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+              <div className="bg-gray-900 p-6 rounded-lg border border-red-900/30 hover:border-red-500 transition-all">
+                <div className="text-4xl mb-4">🎤</div>
+                <h3 className="text-xl font-bold mb-2">Fear Detection</h3>
+                <p className="text-gray-400">
+                  The game listens to your breathing, screams, and panic through your microphone
+                </p>
+              </div>
+              <div className="bg-gray-900 p-6 rounded-lg border border-red-900/30 hover:border-red-500 transition-all">
+                <div className="text-4xl mb-4">🧠</div>
+                <h3 className="text-xl font-bold mb-2">Adaptive AI</h3>
+                <p className="text-gray-400">
+                  The Entity learns what scares you and creates personalized nightmares
+                </p>
+              </div>
+              <div className="bg-gray-900 p-6 rounded-lg border border-red-900/30 hover:border-red-500 transition-all">
+                <div className="text-4xl mb-4">🚪</div>
+                <h3 className="text-xl font-bold mb-2">Escape Rooms</h3>
+                <p className="text-gray-400">
+                  Solve mind-bending puzzles while your sanity crumbles around you
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-red-900/20 p-8 rounded-lg border border-red-900/50">
+              <h3 className="text-2xl font-bold mb-4">⚠️ WARNING</h3>
+              <p className="text-lg">
+                This game uses real-time fear analysis. Your microphone will detect breathing patterns, 
+                stress levels, and screams. The Entity will use this data to create your personal hell.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {activeSection === 'features' && (
+          <div className="space-y-12">
+            <h2 className="text-4xl font-bold text-center mb-12">Revolutionary Horror Features</h2>
+            
+            <div className="space-y-8">
+              <div className="bg-gray-900 p-8 rounded-lg border-l-4 border-red-500">
+                <h3 className="text-2xl font-bold mb-4">🎭 The Entity</h3>
+                <p className="text-gray-300 mb-4">
+                  An AI-driven antagonist that starts as a shadow in the corner, learning your fears. 
+                  It evolves through multiple forms:
+                </p>
+                <ul className="list-disc list-inside text-gray-400 space-y-2">
+                  <li>Shadow Form - Observes from darkness</li>
+                  <li>Mimic Form - Impersonates your teammates</li>
+                  <li>Nightmare Form - Manifests your specific fears</li>
+                  <li>True Form - Incomprehensible geometry that breaks sanity</li>
+                </ul>
+              </div>
+
+              <div className="bg-gray-900 p-8 rounded-lg border-l-4 border-red-500">
+                <h3 className="text-2xl font-bold mb-4">🧩 Trust-Based Puzzles</h3>
+                <p className="text-gray-300 mb-4">
+                  Each player sees different versions of reality. Communication is key, but can you trust 
+                  what others tell you?
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div className="bg-black/50 p-4 rounded">
+                    <h4 className="font-bold text-red-400">Information Asymmetry</h4>
+                    <p className="text-sm text-gray-400">Players see different clues and solutions</p>
+                  </div>
+                  <div className="bg-black/50 p-4 rounded">
+                    <h4 className="font-bold text-red-400">Sanity Effects</h4>
+                    <p className="text-sm text-gray-400">Low sanity changes puzzle appearances</p>
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-12 bg-gradient-to-r from-pink-100 to-purple-100 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold mb-3">{t('home.howitworks')}</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
-                  <div className="flex items-start gap-3">
-                    <div className="bg-white rounded-full p-2 text-purple-600 font-bold">1</div>
-                    <div>
-                      <h4 className="font-semibold">{t('home.step1.title')}</h4>
-                      <p className="text-sm text-gray-600">{t('home.step1.description')}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="bg-white rounded-full p-2 text-purple-600 font-bold">2</div>
-                    <div>
-                      <h4 className="font-semibold">{t('home.step2.title')}</h4>
-                      <p className="text-sm text-gray-600">{t('home.step2.description')}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="bg-white rounded-full p-2 text-purple-600 font-bold">3</div>
-                    <div>
-                      <h4 className="font-semibold">{t('home.step3.title')}</h4>
-                      <p className="text-sm text-gray-600">{t('home.step3.description')}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Detailed How It Works Section */}
-              <div className="mt-12 text-left space-y-6">
-                <h2 className="text-3xl font-bold text-center mb-8">Why Choose Beauty Match AI?</h2>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="bg-white p-6 rounded-lg shadow-md">
-                    <h3 className="text-xl font-semibold mb-3 text-purple-600">🎯 Personalized Recommendations</h3>
-                    <p className="text-gray-600">
-                      Our advanced AI algorithm analyzes your unique beauty profile to recommend products that actually work for you. No more guessing games or wasted money on products that don't suit your needs.
-                    </p>
-                  </div>
-                  
-                  <div className="bg-white p-6 rounded-lg shadow-md">
-                    <h3 className="text-xl font-semibold mb-3 text-purple-600">🔬 Science-Based Approach</h3>
-                    <p className="text-gray-600">
-                      We use dermatologist-approved classifications and ingredient analysis to ensure every recommendation is backed by science. Your skin and hair deserve products that are proven to work.
-                    </p>
-                  </div>
-                  
-                  <div className="bg-white p-6 rounded-lg shadow-md">
-                    <h3 className="text-xl font-semibold mb-3 text-purple-600">💰 Save Time & Money</h3>
-                    <p className="text-gray-600">
-                      Stop buying products that end up unused. Our targeted recommendations mean you only invest in products that match your specific needs, saving you hundreds of dollars annually.
-                    </p>
-                  </div>
-                  
-                  <div className="bg-white p-6 rounded-lg shadow-md">
-                    <h3 className="text-xl font-semibold mb-3 text-purple-600">⭐ Real User Reviews</h3>
-                    <p className="text-gray-600">
-                      Every product recommendation includes authentic reviews from people with similar beauty profiles. Make informed decisions based on real experiences, not just marketing claims.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="bg-gradient-to-r from-purple-100 to-pink-100 p-8 rounded-lg mt-8">
-                  <h3 className="text-2xl font-semibold mb-4 text-center">Our Promise</h3>
-                  <p className="text-gray-700 text-center max-w-3xl mx-auto">
-                    At Beauty Match AI, we believe everyone deserves to feel confident in their beauty routine. Our mission is to demystify beauty shopping by providing personalized, unbiased recommendations that celebrate your unique features. Whether you're a beauty novice or a skincare enthusiast, we're here to help you discover products that make you look and feel your best.
-                  </p>
-                </div>
-              </div>
-
-              {/* Contact Section */}
-              <div className="mt-16 bg-white rounded-lg shadow-lg p-8">
-                <h2 className="text-2xl font-bold text-center mb-8">Get In Touch</h2>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                  <div>
-                    <div className="text-3xl mb-3">📧</div>
-                    <h4 className="font-semibold mb-2">Email Us</h4>
-                    <p className="text-gray-600">hello@beautymatchai.com</p>
-                    <p className="text-sm text-gray-500 mt-1">24/7 Support</p>
-                  </div>
-                  
-                  <div>
-                    <div className="text-3xl mb-3">📱</div>
-                    <h4 className="font-semibold mb-2">Call Us</h4>
-                    <p className="text-gray-600">1-800-BEAUTY-AI</p>
-                    <p className="text-sm text-gray-500 mt-1">(1-800-232-8892)</p>
-                    <p className="text-sm text-gray-500">Mon-Fri 9AM-6PM EST</p>
-                  </div>
-                  
-                  <div>
-                    <div className="text-3xl mb-3">📍</div>
-                    <h4 className="font-semibold mb-2">Visit Us</h4>
-                    <p className="text-gray-600">123 Beauty Boulevard</p>
-                    <p className="text-gray-600">Suite 456</p>
-                    <p className="text-gray-600">New York, NY 10001</p>
-                  </div>
-                </div>
-
-                <div className="mt-8 text-center">
-                  <h4 className="font-semibold mb-4">Follow Us</h4>
-                  <div className="flex justify-center gap-4">
-                    <button className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-4 py-2 rounded-full hover:shadow-lg transition-all">
-                      Instagram @beautymatchai
-                    </button>
-                    <button className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-4 py-2 rounded-full hover:shadow-lg transition-all">
-                      TikTok @beautymatchai
-                    </button>
-                  </div>
-                </div>
-
-                <div className="mt-8 pt-8 border-t border-gray-200 text-center text-sm text-gray-500">
-                  <p>Beauty Match AI © 2024 | All Rights Reserved</p>
-                  <p className="mt-2">Made with 💖 by the Beauty Match AI Team</p>
-                </div>
-              </div>
+              <div className="bg-gray-900 p-8 rounded-lg border-l-4 border-red-500">
+                <h3 className="text-2xl font-bold mb-4">💀 Permadeath Stakes</h3>
+                <p className="text-gray-300">
+                  One life. One chance. Death means watching your teammates struggle from the shadows 
+                  as The Entity uses your voice to deceive them.
+                </p>
               </div>
             </div>
           </div>
         )}
 
-        {activeTab === 'haircare' && <HaircareQuiz />}
-        {activeTab === 'skincare' && <SkincareQuiz />}
-        {activeTab === 'makeup' && <MakeupQuiz />}
+        {activeSection === 'rooms' && (
+          <div className="space-y-12">
+            <h2 className="text-4xl font-bold text-center mb-12">Escape Rooms</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="bg-gray-900 p-6 rounded-lg border border-red-900/30">
+                <h3 className="text-2xl font-bold mb-4">🪞 The Mirror Room</h3>
+                <p className="text-gray-300 mb-4">
+                  Seven mirrors, but only one shows the truth. The others reveal your deaths, 
+                  your fears, or worse - nothing at all.
+                </p>
+                <ul className="text-sm text-gray-400 space-y-1">
+                  <li>• Reflections move independently</li>
+                  <li>• Dead teammates appear in false mirrors</li>
+                  <li>• Shattered mirrors damage sanity</li>
+                  <li>• Final solution requires sacrifice</li>
+                </ul>
+              </div>
+
+              <div className="bg-gray-900 p-6 rounded-lg border border-red-900/30">
+                <h3 className="text-2xl font-bold mb-4">🧸 The Childhood Room</h3>
+                <p className="text-gray-300 mb-4">
+                  The room transforms into each player's childhood bedroom. Share your traumas 
+                  or remain trapped forever.
+                </p>
+                <ul className="text-sm text-gray-400 space-y-1">
+                  <li>• Toys animate based on fears</li>
+                  <li>• Room shrinks as sanity drops</li>
+                  <li>• Must confess real memories</li>
+                  <li>• Child voices mimic players</li>
+                </ul>
+              </div>
+
+              <div className="bg-gray-900 p-6 rounded-lg border border-red-900/30">
+                <h3 className="text-2xl font-bold mb-4">🏥 The Surgery Theater</h3>
+                <p className="text-gray-300 mb-4">
+                  One player becomes the patient while others perform the "procedure". 
+                  But what you see isn't what's real.
+                </p>
+                <ul className="text-sm text-gray-400 space-y-1">
+                  <li>• Patient sees different horror</li>
+                  <li>• Tools change based on wielder</li>
+                  <li>• The Entity poses as doctor</li>
+                  <li>• Trust exercises under pressure</li>
+                </ul>
+              </div>
+
+              <div className="bg-gray-900 p-6 rounded-lg border border-red-900/30">
+                <h3 className="text-2xl font-bold mb-4">🎭 The Final Door</h3>
+                <p className="text-gray-300 mb-4">
+                  Everything you've feared, all at once. Navigate your personalized nightmare 
+                  gauntlet where one must stay behind.
+                </p>
+                <ul className="text-sm text-gray-400 space-y-1">
+                  <li>• All fears manifest together</li>
+                  <li>• Dimensions collapse</li>
+                  <li>• Entity reveals true form</li>
+                  <li>• Ultimate sacrifice required</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeSection === 'demo' && (
+          <div className="space-y-8">
+            <h2 className="text-4xl font-bold text-center mb-8">Interactive Demo</h2>
+            
+            {/* Status Bars */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-gray-900 p-6 rounded-lg border border-red-900/30">
+                <h3 className="text-xl font-bold mb-4">😱 Fear Level</h3>
+                <div className="w-full bg-gray-800 rounded-full h-6 relative overflow-hidden">
+                  <div 
+                    className="bg-gradient-to-r from-yellow-500 to-red-600 h-full rounded-full transition-all duration-500"
+                    style={{ width: `${fearLevel}%` }}
+                  />
+                  <span className="absolute inset-0 flex items-center justify-center text-sm font-bold">
+                    {fearLevel.toFixed(0)}%
+                  </span>
+                </div>
+                <p className="text-sm text-gray-400 mt-2">
+                  Detected through microphone analysis
+                </p>
+              </div>
+
+              <div className="bg-gray-900 p-6 rounded-lg border border-red-900/30">
+                <h3 className="text-xl font-bold mb-4">🧠 Sanity</h3>
+                <div className="w-full bg-gray-800 rounded-full h-6 relative overflow-hidden">
+                  <div 
+                    className="bg-gradient-to-r from-green-500 to-blue-500 h-full rounded-full transition-all duration-500"
+                    style={{ width: `${sanity}%` }}
+                  />
+                  <span className="absolute inset-0 flex items-center justify-center text-sm font-bold">
+                    {sanity.toFixed(0)}%
+                  </span>
+                </div>
+                <p className="text-sm text-gray-400 mt-2">
+                  Decreases with fear and Entity encounters
+                </p>
+              </div>
+            </div>
+
+            {/* Demo Room */}
+            <div className="bg-gray-900 p-8 rounded-lg border border-red-900/30 relative overflow-hidden">
+              <h3 className="text-2xl font-bold mb-6">🪞 Mirror Room Demo</h3>
+              
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                {[1, 2, 3, 4, 5, 6, 7].map((mirror) => (
+                  <button
+                    key={mirror}
+                    className={`aspect-square bg-gray-800 rounded-lg border-2 border-gray-700 hover:border-red-500 transition-all relative overflow-hidden ${
+                      mirror === 4 ? 'col-start-2' : ''
+                    }`}
+                    onClick={() => {
+                      if (mirror === 3) {
+                        alert('You found the true mirror! But something is watching from behind it...');
+                        setFearLevel(prev => Math.min(prev + 20, 100));
+                      } else {
+                        alert('Your reflection smiles while you frown. This is not the true mirror.');
+                        setSanity(prev => Math.max(prev - 10, 0));
+                      }
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-gray-700 to-gray-900" />
+                    <div className="absolute inset-0 flex items-center justify-center text-4xl opacity-20">
+                      🪞
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-xs text-gray-500">Mirror {mirror}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              <p className="text-center text-gray-400">
+                Click mirrors to find the truth. Wrong choices drain sanity.
+              </p>
+
+              {/* Entity appearance */}
+              {fearLevel > 50 && (
+                <div className="absolute top-4 right-4 text-6xl opacity-20 animate-pulse">
+                  👁️
+                </div>
+              )}
+            </div>
+
+            {/* Game Info */}
+            <div className="bg-red-900/20 p-6 rounded-lg border border-red-900/50">
+              <h3 className="text-xl font-bold mb-3">🎮 Full Game Features</h3>
+              <ul className="space-y-2 text-gray-300">
+                <li>• Real microphone fear detection</li>
+                <li>• 4-player online co-op</li>
+                <li>• 5+ unique escape rooms</li>
+                <li>• Adaptive AI that learns your fears</li>
+                <li>• Photorealistic graphics in Unreal Engine 5</li>
+                <li>• Spatial 3D audio for maximum immersion</li>
+              </ul>
+            </div>
+
+            <div className="text-center">
+              <button className="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-lg text-xl transition-all transform hover:scale-105">
+                Download Full Game (Coming Soon)
+              </button>
+            </div>
+          </div>
+        )}
       </main>
 
-      {/* Back to Top Button */}
-      {showBackToTop && (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-8 left-8 bg-gradient-to-r from-pink-500 to-purple-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 z-50"
-          aria-label="Back to top"
-        >
-          <svg 
-            className="w-6 h-6" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
-          >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M5 10l7-7m0 0l7 7m-7-7v18" 
-            />
-          </svg>
-        </button>
-      )}
+      {/* Footer */}
+      <footer className="mt-24 border-t border-red-900/30 py-8">
+        <div className="max-w-7xl mx-auto px-4 text-center text-gray-500">
+          <p>THE DWELLING © 2024 | A Psychological Horror Experience</p>
+          <p className="mt-2 text-sm">Your worst nightmares are about to become reality</p>
+        </div>
+      </footer>
 
-      {/* Chatbot */}
-      <Chatbot />
+      <style jsx>{`
+        .glitch {
+          animation: glitch 0.1s infinite;
+        }
+        
+        @keyframes glitch {
+          0% { transform: translate(0); }
+          20% { transform: translate(-1px, 1px); }
+          40% { transform: translate(-1px, -1px); }
+          60% { transform: translate(1px, 1px); }
+          80% { transform: translate(1px, -1px); }
+          100% { transform: translate(0); }
+        }
+        
+        .glitch-text {
+          text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75),
+                      -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
+                      0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+          animation: glitch-text 0.5s infinite;
+        }
+        
+        @keyframes glitch-text {
+          0% { text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75),
+                           -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
+                           0.025em 0.05em 0 rgba(0, 0, 255, 0.75); }
+          15% { text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75),
+                            -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
+                            0.025em 0.05em 0 rgba(0, 0, 255, 0.75); }
+          16% { text-shadow: -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
+                            0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
+                            -0.05em -0.05em 0 rgba(0, 0, 255, 0.75); }
+          49% { text-shadow: -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
+                            0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
+                            -0.05em -0.05em 0 rgba(0, 0, 255, 0.75); }
+          50% { text-shadow: 0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
+                            0.025em 0em 0 rgba(0, 255, 0, 0.75),
+                            0em -0.05em 0 rgba(0, 0, 255, 0.75); }
+          99% { text-shadow: 0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
+                            0.025em 0em 0 rgba(0, 255, 0, 0.75),
+                            0em -0.05em 0 rgba(0, 0, 255, 0.75); }
+          100% { text-shadow: -0.025em 0 0 rgba(255, 0, 0, 0.75),
+                             -0.025em -0.025em 0 rgba(0, 255, 0, 0.75),
+                             -0.025em -0.05em 0 rgba(0, 0, 255, 0.75); }
+        }
+      `}</style>
     </div>
   );
 }
